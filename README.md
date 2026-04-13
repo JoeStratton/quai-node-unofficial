@@ -13,7 +13,7 @@ Unofficial Docker image for running a `go-quai` full node.
   - Dockerfile lint (`hadolint`)
   - secret scan (`gitleaks`)
   - Trivy filesystem vulnerability scan
-  - image build + Trivy image scan
+  - image build + Trivy image scan (blocking for OS packages, advisory for go binary library CVEs)
 - `publish.yml`: runs on push to `main` and version tags (`v*`) and:
   - builds multi-arch image (`linux/amd64`, `linux/arm64`)
   - pushes to Docker Hub
