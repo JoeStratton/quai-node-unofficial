@@ -9,11 +9,11 @@ Unofficial Docker image for running a `go-quai` full node.
 
 ## CI/CD workflows
 
-- `ci.yml`: runs on push/PR and performs:
+- `ci.yml`: runs on pull requests (and manually) and performs:
   - Dockerfile lint (`hadolint`)
   - secret scan (`gitleaks`)
   - Trivy filesystem vulnerability scan
-  - image build + Trivy image scan (blocking for OS packages, advisory for go binary library CVEs)
+  - image build + Trivy image scan (blocking for OS packages only)
 - `publish.yml`: runs on push to `main` and version tags (`v*`) and:
   - builds multi-arch image (`linux/amd64`, `linux/arm64`)
   - pushes to Docker Hub
