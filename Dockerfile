@@ -31,6 +31,7 @@ RUN mkdir -p /root/.local/share/go-quai /root/.config/go-quai
 
 COPY --from=builder /src/build/bin/go-quai /usr/local/bin/go-quai
 COPY --from=builder /src/VERSION /app/VERSION
+COPY --from=builder /src/params /app/params
 
 EXPOSE 4001/tcp 3333/tcp 3334/tcp 3335/tcp 3336/tcp
 
