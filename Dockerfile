@@ -1,4 +1,4 @@
-FROM golang:1.23-bookworm AS builder
+FROM golang:1.26-bookworm AS builder
 
 ARG GO_QUAI_VERSION=v0.51.1
 
