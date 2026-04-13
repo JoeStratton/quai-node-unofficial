@@ -6,6 +6,9 @@ on:
     branches:
       - main
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -18,17 +21,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Lint Dockerfile
         uses: hadolint/hadolint-action@v3.3.0
         with:
           dockerfile: Dockerfile
 
-      - name: Secret scan
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Secret scan (gitleaks CLI)
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/gitleaks/gitleaks/master/install.sh | sh -s -- -b /usr/local/bin
+          gitleaks detect --source . --redact
 
       - name: Trivy filesystem scan
         uses: aquasecurity/trivy-action@0.35.0
@@ -45,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
