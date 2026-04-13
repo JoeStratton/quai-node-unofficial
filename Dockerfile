@@ -2,15 +2,16 @@ FROM golang:1.23-bookworm AS builder
 
 ARG GO_QUAI_VERSION=v0.51.1
 
+# hadolint ignore=DL3008
 RUN apt-get update \
     && apt-get install -y --no-install-recommends git make g++ ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /src
 
-RUN git clone https://github.com/dominant-strategies/go-quai.git .
-RUN git checkout "${GO_QUAI_VERSION}"
-RUN make go-quai
+RUN git clone https://github.com/dominant-strategies/go-quai.git . \
+    && git checkout "${GO_QUAI_VERSION}" \
+    && make go-quai
 
 FROM debian:bookworm-slim
 
@@ -19,6 +20,7 @@ LABEL org.opencontainers.image.title="quai-node-unofficial" \
       org.opencontainers.image.documentation="https://docs.qu.ai/guides/client/node" \
       org.opencontainers.image.url="https://docs.qu.ai/guides/client/solo-mining"
 
+# hadolint ignore=DL3008
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates tzdata \
     && rm -rf /var/lib/apt/lists/*
