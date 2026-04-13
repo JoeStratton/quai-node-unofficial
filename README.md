@@ -15,8 +15,10 @@ Unofficial Docker image for running a `go-quai` full node.
   - Trivy filesystem vulnerability scan
   - image build + Trivy image scan (blocking for OS packages only)
 - `publish.yml`: runs on push to `main` and version tags (`v*`) and:
-  - builds multi-arch image (`linux/amd64`, `linux/arm64`)
-  - pushes to Docker Hub
+  - runs `lint-and-security` first
+  - runs `build-image` only after lint/scan passes
+  - runs `push-image` only after build validation passes
+  - pushes multi-arch image (`linux/amd64`, `linux/arm64`) to Docker Hub
   - generates SBOM + provenance attestation
 
 ## Required GitHub repository settings

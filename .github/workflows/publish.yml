@@ -10,12 +10,80 @@ on:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  TRIVY_DISABLE_VEX_NOTICE: "true"
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
 
 jobs:
-  dockerhub:
+  lint-and-security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Lint Dockerfile
+        uses: hadolint/hadolint-action@v3.3.0
+        with:
+          dockerfile: Dockerfile
+
+      # TODO: gitleaks-action currently emits Node 20 deprecation notices.
+      # Keep official action for now; migrate to a Node 24-compatible release when available.
+      - name: Secret scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trivy filesystem scan
+        uses: aquasecurity/trivy-action@0.35.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: table
+          ignore-unfixed: true
+          severity: CRITICAL,HIGH
+          exit-code: 1
+
+  build-image:
+    needs: lint-and-security
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image (validation only)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          tags: quai-node-unofficial:publish-check
+          load: true
+          push: false
+          build-args: |
+            GO_QUAI_VERSION=v0.51.1
+
+      - name: Trivy image scan (OS packages, blocking)
+        uses: aquasecurity/trivy-action@0.35.0
+        with:
+          image-ref: quai-node-unofficial:publish-check
+          scanners: vuln
+          vuln-type: os
+          format: table
+          ignore-unfixed: true
+          severity: CRITICAL,HIGH
+          exit-code: 1
+
+  push-image:
+    needs: build-image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
