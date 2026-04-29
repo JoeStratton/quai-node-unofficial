@@ -61,8 +61,6 @@ jobs:
           tags: quai-node-unofficial:ci
           load: true
           push: false
-          build-args: |
-            GO_QUAI_VERSION=v0.51.1
 
       - name: Trivy image scan (OS packages, blocking)
         uses: aquasecurity/trivy-action@v0.36.0
