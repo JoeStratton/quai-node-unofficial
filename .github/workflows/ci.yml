@@ -33,7 +33,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Trivy filesystem scan
-        uses: aquasecurity/trivy-action@0.35.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: fs
           scan-ref: .
@@ -65,7 +65,7 @@ jobs:
             GO_QUAI_VERSION=v0.51.1
 
       - name: Trivy image scan (OS packages, blocking)
-        uses: aquasecurity/trivy-action@0.35.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: quai-node-unofficial:ci
           scanners: vuln
@@ -76,7 +76,7 @@ jobs:
           exit-code: 1
 
       - name: Trivy image scan (go binary libs, advisory)
-        uses: aquasecurity/trivy-action@0.35.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: quai-node-unofficial:ci
           scanners: vuln
