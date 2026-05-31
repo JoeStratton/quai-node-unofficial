@@ -36,7 +36,7 @@ jobs:
       # TODO: gitleaks-action currently emits Node 20 deprecation notices.
       # Keep official action for now; migrate to a Node 24-compatible release when available.
       - name: Secret scan
-        uses: gitleaks/gitleaks-action@v2
+        uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
