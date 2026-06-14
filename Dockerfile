@@ -1,6 +1,6 @@
 FROM golang:1.26.4-bookworm AS builder
 
-ARG GO_QUAI_VERSION=v0.53.0
+ARG GO_QUAI_VERSION=v0.54.0
 
 # hadolint ignore=DL3008
 RUN apt-get update \
