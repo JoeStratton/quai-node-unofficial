@@ -11,12 +11,12 @@ COPY go.mod go.sum ./
 
 RUN GO_QUAI_VERSION="$(awk '$1 == "require" && $2 == "github.com/dominant-strategies/go-quai" { print $3; exit }' go.mod)" \
     && git clone --depth 1 --branch "${GO_QUAI_VERSION}" \
-         https://github.com/dominant-strategies/go-quai.git /src
+         https://github.com/dominant-strategies/go-quai.git src
 
-WORKDIR /src
+WORKDIR /build/src
 
 RUN make go-quai \
-    && strip --strip-unneeded /src/build/bin/go-quai
+    && strip --strip-unneeded build/bin/go-quai
 
 FROM debian:bookworm-slim
 
@@ -36,9 +36,9 @@ RUN apt-get update \
 
 WORKDIR /app
 
-COPY --from=builder /src/build/bin/go-quai /usr/local/bin/go-quai
-COPY --from=builder /src/VERSION /app/VERSION
-COPY --from=builder /src/params /app/params
+COPY --from=builder /build/src/build/bin/go-quai /usr/local/bin/go-quai
+COPY --from=builder /build/src/VERSION /app/VERSION
+COPY --from=builder /build/src/params /app/params
 
 RUN chown quai:quai /usr/local/bin/go-quai \
     && chown -R quai:quai /app
