@@ -56,10 +56,13 @@ git push origin v0.51.1
 
 `publish.yml` pushes:
 
+- `DOCKERHUB_USERNAME/quai-node-unofficial:latest` (main branch only; moves with each main push)
 - `DOCKERHUB_USERNAME/quai-node-unofficial:main` (main branch)
-- `DOCKERHUB_USERNAME/quai-node-unofficial:latest` (main branch)
-- `DOCKERHUB_USERNAME/quai-node-unofficial:vX.Y.Z` (tagged releases)
+- `DOCKERHUB_USERNAME/quai-node-unofficial:vX.Y.Z` (immutable tag from `go.mod` go-quai version on every publish; older tags are kept on Docker Hub)
+- `DOCKERHUB_USERNAME/quai-node-unofficial:<git-tag>` (when you push a repo `v*` git tag)
 - `DOCKERHUB_USERNAME/quai-node-unofficial:sha-<commit>`
+
+Use the go-quai version tag (for example `v0.55.0`) to pin a specific upstream release. `latest` always points at the most recent main build.
 
 ## Runtime notes (solo mining)
 

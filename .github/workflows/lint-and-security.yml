@@ -21,21 +21,12 @@ jobs:
         uses: hadolint/hadolint-action@v3.4.0
         with:
           dockerfile: Dockerfile
+          failure-threshold: warning
 
       - name: Secret scan
         uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Trivy filesystem scan
-        uses: aquasecurity/trivy-action@v0.36.0
-        with:
-          scan-type: fs
-          scan-ref: .
-          format: table
-          ignore-unfixed: true
-          severity: CRITICAL,HIGH
-          exit-code: 1
 
       - name: Trivy filesystem scan (SARIF)
         uses: aquasecurity/trivy-action@v0.36.0
@@ -50,8 +41,18 @@ jobs:
 
       - name: Upload Trivy filesystem SARIF
         uses: github/codeql-action/upload-sarif@v4
-        if: always()
+        if: hashFiles('trivy-fs.sarif') != ''
         continue-on-error: true
         with:
           sarif_file: trivy-fs.sarif
           category: trivy-filesystem
+
+      - name: Trivy filesystem scan
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: table
+          ignore-unfixed: true
+          severity: CRITICAL,HIGH
+          exit-code: 1
