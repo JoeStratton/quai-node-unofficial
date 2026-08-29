@@ -128,7 +128,7 @@ jobs:
 
       - name: Create GitHub release
         if: github.ref == 'refs/heads/main'
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ steps.goquai.outputs.immutable }}
           name: ${{ steps.goquai.outputs.immutable }}
@@ -177,7 +177,7 @@ jobs:
 
       - name: Create GitHub release for pushed git tag
         if: github.ref_type == 'tag' && steps.tag_release.outputs.exists != 'true'
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
