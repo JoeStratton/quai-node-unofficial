@@ -17,6 +17,19 @@ jobs:
           # Gitleaks diffs commits and needs parent history on push events.
           fetch-depth: 0
 
+      - name: Prepare git history for Gitleaks
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --tags --force origin
+          if git rev-parse --is-shallow-repository | grep -q true; then
+            git fetch --unshallow origin
+          fi
+          if ! git rev-parse "${GITHUB_SHA}^" >/dev/null 2>&1; then
+            git fetch origin --deepen=1
+          fi
+          git rev-parse "${GITHUB_SHA}^" >/dev/null
+
       - name: Lint GitHub Actions workflows
         uses: raven-actions/actionlint@v2
 
