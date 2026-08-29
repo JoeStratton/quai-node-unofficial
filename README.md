@@ -76,18 +76,17 @@ j123ss/quai-node-unofficial:v0.55.0-sha-86ab9d5
 j123ss/quai-node-unofficial:sha-86ab9d5
 ```
 
-`v0.51.1` on [GitHub Tags](https://github.com/JoeStratton/quai-node-unofficial/tags) is from an older manual release; new tags are created automatically by `publish.yml` on each successful `main` build.
+`v0.51.1` on [GitHub Tags](https://github.com/JoeStratton/quai-node-unofficial/tags) is from an older manual release; new version tags are created automatically when go-quai is upgraded in `go.mod`.
 
 ## GitHub releases and tags
 
-Each successful publish to `main` also creates:
+When go-quai is upgraded in `go.mod`, the first successful publish to `main` creates a GitHub tag and release named after the go-quai version (for example `v0.55.0`). The release notes only state that go-quai was upgraded — not pipeline or repo commit history.
 
-| GitHub tag | Docker tag | Purpose |
-|------------|------------|---------|
-| `vX.Y.Z-sha-<commit>` | same | **Immutable** release per build (listed on [Tags](https://github.com/JoeStratton/quai-node-unofficial/tags)) |
-| `vX.Y.Z` | same | Created once per go-quai version in `go.mod` (first successful build for that version) |
+| GitHub tag / release | Docker tag | Purpose |
+|--------------------|------------|---------|
+| `vX.Y.Z` | `vX.Y.Z` | Created once per go-quai version in `go.mod` |
 
-Pushing a repo `v*` git tag still triggers publish and creates a matching GitHub Release if one does not exist.
+Pushing a repo `v*` git tag still triggers publish and creates a matching GitHub release if one does not exist.
 
 ## Runtime notes (solo mining)
 

@@ -129,27 +129,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Create GitHub release
-        if: github.ref == 'refs/heads/main'
-        uses: softprops/action-gh-release@v3
-        with:
-          tag_name: ${{ steps.goquai.outputs.immutable }}
-          name: ${{ steps.goquai.outputs.immutable }}
-          target_commitish: ${{ github.sha }}
-          generate_release_notes: true
-          body: |
-            Docker image for go-quai **${{ steps.goquai.outputs.version }}** at commit `${{ steps.goquai.outputs.short_sha }}`.
-
-            ```bash
-            docker pull ${{ vars.DOCKERHUB_USERNAME }}/quai-node-unofficial:${{ steps.goquai.outputs.immutable }}
-            ```
-
-            | Tag | Purpose |
-            |-----|---------|
-            | `${{ steps.goquai.outputs.immutable }}` | Pin this exact build (immutable) |
-            | `${{ steps.goquai.outputs.version }}` | Latest image for this go-quai version |
-            | `sha-${{ steps.goquai.outputs.short_sha }}` | Short git SHA |
-
       - name: Ensure go-quai version git tag exists
         if: github.ref == 'refs/heads/main'
         env:
@@ -163,7 +142,7 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -a "${version}" -m "go-quai ${version} image line" "${GITHUB_SHA}"
+          git tag -a "${version}" -m "go-quai ${version}" "${GITHUB_SHA}"
           git push origin "${version}"
 
       - name: Check pushed tag release
@@ -182,10 +161,11 @@ jobs:
         if: github.ref_type == 'tag' && steps.tag_release.outputs.exists != 'true'
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: ${{ github.ref_name }}
-          name: ${{ github.ref_name }}
-          generate_release_notes: true
+          tag_name: ${{ steps.goquai.outputs.version }}
+          name: ${{ steps.goquai.outputs.version }}
           body: |
+            go-quai upgraded to ${{ steps.goquai.outputs.version }}.
+
             ```bash
-            docker pull ${{ vars.DOCKERHUB_USERNAME }}/quai-node-unofficial:${{ github.ref_name }}
+            docker pull ${{ vars.DOCKERHUB_USERNAME }}/quai-node-unofficial:${{ steps.goquai.outputs.version }}
             ```
