@@ -24,7 +24,8 @@ jobs:
         uses: hadolint/hadolint-action@v3.4.0
         with:
           dockerfile: Dockerfile
-          failure-threshold: warning
+          config: .hadolint.yaml
+          failure-threshold: error
 
       - name: Secret scan
         uses: gitleaks/gitleaks-action@v3

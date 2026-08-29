@@ -43,7 +43,7 @@ COPY --from=builder /src/params /app/params
 RUN chown quai:quai /usr/local/bin/go-quai \
     && chown -R quai:quai /app
 
-USER 65532:65532
+USER 65532
 
 EXPOSE 4001/tcp 3333/tcp 3334/tcp 3335/tcp 3336/tcp
 
