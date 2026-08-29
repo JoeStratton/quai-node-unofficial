@@ -13,6 +13,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          # Gitleaks diffs commits and needs parent history on push events.
+          fetch-depth: 0
 
       - name: Lint GitHub Actions workflows
         uses: raven-actions/actionlint@v2
