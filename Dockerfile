@@ -1,15 +1,17 @@
-FROM golang:1.27rc2-bookworm AS builder
-
-ARG GO_QUAI_VERSION=v0.55.0
+﻿FROM golang:1.27rc2-bookworm AS builder
 
 # hadolint ignore=DL3008
 RUN apt-get update \
     && apt-get install -y --no-install-recommends git make g++ ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /src
+WORKDIR /build
 
-RUN git clone https://github.com/dominant-strategies/go-quai.git . \
+COPY go.mod go.sum ./
+
+RUN GO_QUAI_VERSION="$(awk '$1 == "require" && $2 == "github.com/dominant-strategies/go-quai" { print $3; exit }' go.mod)" \
+    && git clone https://github.com/dominant-strategies/go-quai.git /src \
+    && cd /src \
     && git checkout "${GO_QUAI_VERSION}" \
     && make go-quai
 
