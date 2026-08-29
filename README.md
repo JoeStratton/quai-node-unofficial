@@ -54,15 +54,40 @@ git push origin v0.51.1
 
 ## Docker Hub output tags
 
-`publish.yml` pushes:
+Every successful publish to `main` pushes **multiple tags**; Docker Hub keeps all of them (older tags are not removed):
 
-- `DOCKERHUB_USERNAME/quai-node-unofficial:latest` (main branch only; moves with each main push)
-- `DOCKERHUB_USERNAME/quai-node-unofficial:main` (main branch)
-- `DOCKERHUB_USERNAME/quai-node-unofficial:vX.Y.Z` (immutable tag from `go.mod` go-quai version on every publish; older tags are kept on Docker Hub)
-- `DOCKERHUB_USERNAME/quai-node-unofficial:<git-tag>` (when you push a repo `v*` git tag)
-- `DOCKERHUB_USERNAME/quai-node-unofficial:sha-<commit>`
+| Tag | Purpose |
+|-----|---------|
+| `latest` | Most recent `main` build (moves forward) |
+| `main` | Same as `latest` for branch pulls |
+| `vX.Y.Z` | go-quai version from `go.mod` (e.g. `v0.55.0`; updates if that version is rebuilt) |
+| `vX.Y.Z-sha-<commit>` | **Immutable** — one tag per commit, safe to pin long-term |
+| `sha-<commit>` | **Immutable** — short git SHA |
+| `<git-tag>` | When you push a repo `v*` git tag |
 
-Use the go-quai version tag (for example `v0.55.0`) to pin a specific upstream release. `latest` always points at the most recent main build.
+**Pin a specific build:** use `v0.55.0-sha-86ab9d5` or `sha-86ab9d5`.
+
+**Pin a go-quai release line:** use `v0.55.0` (tracks the newest image built for that upstream version).
+
+Example:
+
+```text
+j123ss/quai-node-unofficial:v0.55.0-sha-86ab9d5
+j123ss/quai-node-unofficial:sha-86ab9d5
+```
+
+`v0.51.1` on [GitHub Tags](https://github.com/JoeStratton/quai-node-unofficial/tags) is from an older manual release; new tags are created automatically by `publish.yml` on each successful `main` build.
+
+## GitHub releases and tags
+
+Each successful publish to `main` also creates:
+
+| GitHub tag | Docker tag | Purpose |
+|------------|------------|---------|
+| `vX.Y.Z-sha-<commit>` | same | **Immutable** release per build (listed on [Tags](https://github.com/JoeStratton/quai-node-unofficial/tags)) |
+| `vX.Y.Z` | same | Created once per go-quai version in `go.mod` (first successful build for that version) |
+
+Pushing a repo `v*` git tag still triggers publish and creates a matching GitHub Release if one does not exist.
 
 ## Runtime notes (solo mining)
 
