@@ -1,0 +1,74 @@
+# Go build artifacts (if you build or test locally)
+/bin/
+/build/
+/vendor/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+coverage.*
+*.coverprofile
+go.work
+go.work.sum
+
+# Local go-quai source clone (debugging outside Docker)
+/go-quai/
+
+# Docker
+docker-compose.override.yml
+docker-compose.override.yaml
+*.tar
+*.tar.gz
+*.img
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.crt
+credentials.json
+secrets.json
+dockerhub-token.txt
+
+# Security scan / CI artifacts (local runs)
+*.sarif
+sbom.*
+.trivyignore.local
+.hadolint.yaml.local
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Editors and IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.iml
+.project
+.classpath
+.settings/
+
+# Logs and temp files
+*.log
+logs/
+tmp/
+temp/
+
+# Quai node runtime data (if bind-mounted into the repo during local dev)
+.go-quai/
+go-quai-data/
