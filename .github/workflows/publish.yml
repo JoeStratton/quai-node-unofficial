@@ -44,9 +44,11 @@ jobs:
         run: |
           version="$(awk '$1 == "require" && $2 == "github.com/dominant-strategies/go-quai" { print $3; exit }' go.mod)"
           short_sha="${GITHUB_SHA::7}"
-          echo "version=${version}" >> "$GITHUB_OUTPUT"
-          echo "short_sha=${short_sha}" >> "$GITHUB_OUTPUT"
-          echo "immutable=${version}-sha-${short_sha}" >> "$GITHUB_OUTPUT"
+          {
+            echo "version=${version}"
+            echo "short_sha=${short_sha}"
+            echo "immutable=${version}-sha-${short_sha}"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Docker metadata
         id: meta
@@ -161,14 +163,25 @@ jobs:
           git tag -a "${version}" -m "go-quai ${version} image line" "${GITHUB_SHA}"
           git push origin "${version}"
 
-      - name: Create GitHub release for pushed git tag
+      - name: Check pushed tag release
         if: github.ref_type == 'tag'
+        id: tag_release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view "${{ github.ref_name }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create GitHub release for pushed git tag
+        if: github.ref_type == 'tag' && steps.tag_release.outputs.exists != 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
           generate_release_notes: true
-          skip_if_release_exists: true
           body: |
             ```bash
             docker pull ${{ vars.DOCKERHUB_USERNAME }}/quai-node-unofficial:${{ github.ref_name }}
